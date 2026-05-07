@@ -1,3 +1,107 @@
+Car3D
+An application generated entirely through conversational prompts with TeleClaw, without reviewing the actual code. It is a 3D car model viewer based on Android's floating window system and OpenGL ES. It loads GLB-format 3D model files and renders them as an overlay on screen, supporting multi-model switching and drag-to-reposition.
+
+Features
+3D Model Rendering: Parses and renders GLB-format 3D models using OpenGL ES
+Floating Window Display: Renders as a System Alert Window overlay on top of other apps
+Multi-Model Switching: Supports loading multiple GLB models, with button-triggered sequential switching
+Drag-to-Reposition: Touch-draggable floating window for free positioning
+Auto-Rotation: Models rotate automatically without manual interaction
+Texture Mapping: Full support for embedded GLB texture rendering
+Foreground Service: Prevents the system from killing the app via foreground Service mechanism
+Low Resource Usage: Zero third-party dependencies; the obfuscated Release APK is only 66KB
+Technical Architecture
+Component	Description
+MainActivity	Entry Activity, handles permission checks and service startup
+FloatingWindowService	Core service, manages floating window creation and OpenGL ES rendering
+GlbParser	GLB file parser, extracts model vertices, normals, texture coordinates, and texture data
+Rendering Engine: OpenGL ES 2.0 + EGL14 + TextureView
+Animation Driver: Choreographer VSync callback, smooth 60fps rendering
+Architecture: Service + WindowManager system floating window
+Model Files
+Storage Location
+Place GLB model files in the device's Download directory:
+
+/sdcard/Download/1.glb
+/sdcard/Download/2.glb
+/sdcard/Download/3.glb
+...
+Files follow a numeric naming convention (1.glb, 2.glb, 3.glb...), with no upper limit on quantity.
+
+Switching Models
+Tap the switch button on the left side of the floating window to cycle through models in numerical order. If the next numbered file does not exist, it automatically wraps back to 1.glb.
+
+Compatibility
+Android Version	Status	Notes
+Android 6.0 (API 23)	Supported	minSdk 23
+Android 7.0-7.1 (API 24-25)	Supported	Floating window uses TYPE_PHONE
+Android 8.0+ (API 26+)	Supported	NotificationChannel creation required
+Android 10 (API 29)	Supported	requestLegacyExternalStorage compatibility
+Android 11+ (API 30+)	Supported	Uses MANAGE_EXTERNAL_STORAGE permission
+Android 13+ (API 33+)	Supported	Dynamic POST_NOTIFICATIONS permission request
+Android 14 (API 34)	Supported	foregroundServiceType passed to startForeground
+Permissions
+Permission	Purpose
+SYSTEM_ALERT_WINDOW	Display floating window above other apps
+FOREGROUND_SERVICE	Foreground service to keep app alive
+FOREGROUND_SERVICE_DATA_SYNC	Android 14 foreground service type declaration
+POST_NOTIFICATIONS	Android 13+ notification permission
+READ_EXTERNAL_STORAGE	Read GLB model files
+MANAGE_EXTERNAL_STORAGE	Android 11+ full file access permission
+Build Requirements
+Android Studio (latest version recommended)
+JDK 1.8+
+Android SDK, compileSdk 34
+No third-party dependencies, pure native Android development
+Project Structure
+Car3D/
+├── app/
+│   ├── build.gradle              # App build configuration
+│   ├── proguard-rules.pro        # R8 obfuscation rules
+│   └── src/main/
+│       ├── AndroidManifest.xml   # Permissions and component declarations
+│       ├── java/com/jingxin/car3d/
+│       │   ├── MainActivity.java        # Entry point, permission checks
+│       │   ├── FloatingWindowService.java  # Floating window + OpenGL rendering (core)
+│       │   └── GlbParser.java           # GLB file parser
+│       └── res/
+│           ├── layout/activity_main.xml  # Activity layout
+│           ├── mipmap-*/ic_launcher.png   # App icon
+│           └── values/
+│               ├── strings.xml           # String resources
+│               ├── colors.xml            # Color resources
+│               └── styles.xml            # Theme styles
+├── build.gradle                  # Project-level build configuration
+├── gradle.properties             # Gradle properties
+├── settings.gradle               # Module configuration
+├── gradlew / gradlew.bat         # Gradle Wrapper
+└── .gitignore                    # Git ignore rules
+ProGuard Rules
+R8 obfuscation is enabled (minifyEnabled + shrinkResources), with the following keep rules configured:
+
+GlbParser and its inner class Accessor: public fields are directly accessed by the renderer
+R$drawable: Resource file references
+APK Size
+Build Type	Size
+Debug	~260KB
+Release (R8 obfuscated)	~66KB
+Use Case
+Designed for LeCo Auto (car head unit launcher) users. Displays 3D car models as a floating window overlay on the car infotainment system, for desktop decoration and personalization.
+
+Demo
+https://pd.qq.com/s/5smopu79k
+
+Developer
+Jingxin (静心)
+
+License
+Personal project, for learning and non-commercial use only.
+
+AI-generated
+
+-------------------- 
+
+
 # 车辆3D (Car3D)
 
 一个纯用teleclaw在对话中生成的应用，没有看过具体代码。基于 Android 悬浮窗 + OpenGL ES 的 3D 车模型展示应用。加载 GLB 格式的 3D 模型文件，以悬浮窗形式在屏幕上渲染展示，支持多模型切换和拖动定位。
@@ -133,3 +237,5 @@ https://pd.qq.com/s/5smopu79k
 个人项目，仅供学习交流。
 
 > AI生成
+
+
