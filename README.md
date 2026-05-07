@@ -1,106 +1,121 @@
-Car3D
-An application generated entirely through conversational prompts with TeleClaw, without reviewing the actual code. It is a 3D car model viewer based on Android's floating window system and OpenGL ES. It loads GLB-format 3D model files and renders them as an overlay on screen, supporting multi-model switching and drag-to-reposition.
+# Amap Assist Navigation
 
-Features
-3D Model Rendering: Parses and renders GLB-format 3D models using OpenGL ES
-Floating Window Display: Renders as a System Alert Window overlay on top of other apps
-Multi-Model Switching: Supports loading multiple GLB models, with button-triggered sequential switching
-Drag-to-Reposition: Touch-draggable floating window for free positioning
-Auto-Rotation: Models rotate automatically without manual interaction
-Texture Mapping: Full support for embedded GLB texture rendering
-Foreground Service: Prevents the system from killing the app via foreground Service mechanism
-Low Resource Usage: Zero third-party dependencies; the obfuscated Release APK is only 66KB
-Technical Architecture
-Component	Description
-MainActivity	Entry Activity, handles permission checks and service startup
-FloatingWindowService	Core service, manages floating window creation and OpenGL ES rendering
-GlbParser	GLB file parser, extracts model vertices, normals, texture coordinates, and texture data
-Rendering Engine: OpenGL ES 2.0 + EGL14 + TextureView
-Animation Driver: Choreographer VSync callback, smooth 60fps rendering
-Architecture: Service + WindowManager system floating window
-Model Files
-Storage Location
-Place GLB model files in the device's Download directory:
+An application built entirely through conversational prompts with TeleClaw, without reviewing a single line of code. An Android app that monitors Amap (Gaode Map) navigation notifications and displays navigation information.
 
-/sdcard/Download/1.glb
-/sdcard/Download/2.glb
-/sdcard/Download/3.glb
-...
-Files follow a numeric naming convention (1.glb, 2.glb, 3.glb...), with no upper limit on quantity.
+## Features
 
-Switching Models
-Tap the switch button on the left side of the floating window to cycle through models in numerical order. If the next numbered file does not exist, it automatically wraps back to 1.glb.
+- ✅ Monitor Amap navigation notifications
+- ✅ Real-time display of navigation instructions (turn left, turn right, etc.)
+- ✅ Display distance information (e.g., "Turn left in 100 meters")
+- ✅ Display road name information (e.g., "Enter Zhongshan Road")
+- ✅ Display traffic light information
+- ✅ Display remaining time and distance
+- ✅ Tap the guidance icon to toggle day/night mode
+- ✅ Tap non-destination area to cycle through rectangular, two-line, and single-line display modes (for LeCo screen-off)
+- ✅ Tap destination info to close the app
+- ✅ Floating window background uses gradient transparency for better visual integration
 
-Compatibility
-Android Version	Status	Notes
-Android 6.0 (API 23)	Supported	minSdk 23
-Android 7.0-7.1 (API 24-25)	Supported	Floating window uses TYPE_PHONE
-Android 8.0+ (API 26+)	Supported	NotificationChannel creation required
-Android 10 (API 29)	Supported	requestLegacyExternalStorage compatibility
-Android 11+ (API 30+)	Supported	Uses MANAGE_EXTERNAL_STORAGE permission
-Android 13+ (API 33+)	Supported	Dynamic POST_NOTIFICATIONS permission request
-Android 14 (API 34)	Supported	foregroundServiceType passed to startForeground
-Permissions
-Permission	Purpose
-SYSTEM_ALERT_WINDOW	Display floating window above other apps
-FOREGROUND_SERVICE	Foreground service to keep app alive
-FOREGROUND_SERVICE_DATA_SYNC	Android 14 foreground service type declaration
-POST_NOTIFICATIONS	Android 13+ notification permission
-READ_EXTERNAL_STORAGE	Read GLB model files
-MANAGE_EXTERNAL_STORAGE	Android 11+ full file access permission
-Build Requirements
-Android Studio (latest version recommended)
-JDK 1.8+
-Android SDK, compileSdk 34
-No third-party dependencies, pure native Android development
-Project Structure
-Car3D/
+## Usage
+
+### 1. Install
+
+Install directly on Android.
+
+### 2. Enable Notification Listener Permission
+
+- Open the app
+- Tap the "Enable Notification Listener Permission" button
+- Find "Amap Assist Navigation" in system settings
+- Enable notification listener permission
+
+### 3. Start Navigation
+
+- Open Amap (Gaode Map)
+- Enter a destination and start navigation
+- Return to the "Amap Assist Navigation" app
+- Navigation information will display automatically
+
+## Technical Implementation
+
+### Core Components
+
+1. **AmapNotificationListener** - Notification listener service
+    
+    - Monitors Amap package name `com.autonavi.minimap`
+    - Extracts notification content (title, text, bigText)
+    - Sends broadcast to update the main UI
+2. **NavigationParser** - Navigation information parser
+    
+    - Uses regex to extract distance and time
+    - Matches navigation instruction keywords
+    - Extracts road name information
+3. **MainActivity** - Main interface
+    
+    - Displays navigation information
+    - Checks notification listener permission status
+    - Guides users to enable permissions
+
+## Demo
+
+[https://pd.qq.com/s/2tqium71m](https://pd.qq.com/s/2tqium71m)
+
+## Project Structure
+
+```
+AmapAssistNav/
 ├── app/
-│   ├── build.gradle              # App build configuration
-│   ├── proguard-rules.pro        # R8 obfuscation rules
-│   └── src/main/
-│       ├── AndroidManifest.xml   # Permissions and component declarations
-│       ├── java/com/jingxin/car3d/
-│       │   ├── MainActivity.java        # Entry point, permission checks
-│       │   ├── FloatingWindowService.java  # Floating window + OpenGL rendering (core)
-│       │   └── GlbParser.java           # GLB file parser
-│       └── res/
-│           ├── layout/activity_main.xml  # Activity layout
-│           ├── mipmap-*/ic_launcher.png   # App icon
-│           └── values/
-│               ├── strings.xml           # String resources
-│               ├── colors.xml            # Color resources
-│               └── styles.xml            # Theme styles
-├── build.gradle                  # Project-level build configuration
-├── gradle.properties             # Gradle properties
-├── settings.gradle               # Module configuration
-├── gradlew / gradlew.bat         # Gradle Wrapper
-└── .gitignore                    # Git ignore rules
-ProGuard Rules
-R8 obfuscation is enabled (minifyEnabled + shrinkResources), with the following keep rules configured:
+│   ├── src/main/
+│   │   ├── java/com/jingxin/amapnav/
+│   │   │   ├── MainActivity.java          # Main interface
+│   │   │   ├── AmapNotificationListener.java  # Notification listener
+│   │   │   ├── NavigationInfo.java        # Data model
+│   │   │   └── NavigationParser.java      # Parser
+│   │   └ res/
+│   │   │   ├── layout/activity_main.xml
+│   │   │   └ values/
+│   │   │   │   ├── strings.xml
+│   │   │   │   ├── colors.xml
+│   │   │   │   └── styles.xml
+│   │   └ AndroidManifest.xml
+│   └ build.gradle
+│   └ proguard-rules.pro
+├── build.gradle
+├── settings.gradle
+├── gradle.properties
+└ README.md
+```
 
-GlbParser and its inner class Accessor: public fields are directly accessed by the renderer
-R$drawable: Resource file references
-APK Size
-Build Type	Size
-Debug	~260KB
-Release (R8 obfuscated)	~66KB
-Use Case
-Designed for LeCo Auto (car head unit launcher) users. Displays 3D car models as a floating window overlay on the car infotainment system, for desktop decoration and personalization.
+## Notes
 
-Demo
-https://pd.qq.com/s/5smopu79k
+1. **Notification content may be incomplete**
+    
+    - Notification content from Amap depends on its implementation
+    - May require real-world testing and parser logic adjustments
+2. **Alternative approach**
+    
+    - If notification content is insufficient, consider using AccessibilityService
+    - AccessibilityService can read all UI elements on Amap's interface
+3. **Compatibility**
+    
+    - Amap updates may change notification format
+    - Parser rules may need adjustment accordingly
 
-Developer
-Jingxin (静心)
+## Future Improvements
 
-License
-Personal project, for learning and non-commercial use only.
+- [ ]  Add TTS voice broadcast
+- [ ]  Add floating window display
+- [ ]  Add navigation history
+- [ ]  Add AccessibilityService as fallback
+- [ ]  Some guidance icons are incomplete and need further refinement — refer to Amap navigation as the ground truth
+- [ ]  Traffic light info may not appear on all devices; the root cause is still under investigation
 
-AI-generated
+## Development Info
 
--------------------- 
-
+- **Created**: 2026-04-26
+- **Developer**: jingxin
+- **Package**: com.jingxin.amapnav
+- **Min SDK**: Android 7.0 (API 24)
+- **Target SDK**: Android 14 (API 34)
 
 # 车辆3D (Car3D)
 
